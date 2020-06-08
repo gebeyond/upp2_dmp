@@ -1,0 +1,171 @@
+openapi: 3.0.0
+info:
+  title: 'UPP2 Network RemoteID DMP '
+  version: 0.0.2
+paths:
+  '/display/{session_id}':
+    parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: >-
+          A unique ID assigned to the current display session.  Display sessions
+          capture the interactions between a display client and display provider
+          for a specific geographic area.  A new display session is initiated
+          when the display client requests a new geographic area from the
+          display provider (i.e. user pans or zooms a map display)
+    put:
+      summary: Denotes the beginning of a new display session
+      description: ''
+      operationId: putDisplaySession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_uss:
+                  type: string
+                bbox:
+                  type: array
+                  items:
+                    type: number
+                    format: float
+                  maxItems: 4
+                  minItems: 4
+                  description: >-
+                    2D bounding box as per RFC7946 (southwesterly point followed
+                    by northeasterly point, in longitude-latitude order)
+                session_initiated:
+                  type: string
+                  format: date-time
+              example:
+                source_uss: uss.provider123.net
+                bbox:
+                  - 177
+                  - -20
+                  - -178
+                  - -16
+                session_initiated: '2015-08-20T14:11:56.118Z'
+      responses:
+        default:
+          description: Default error sample response
+    post:
+      summary: Captures interaction between display and service providers
+      description: ''
+      operationId: ''
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_uss:
+                  type: string
+                target_uss:
+                  type: string
+                request_sent:
+                  type: string
+                  format: date-time
+                request_body:
+                  type: string
+                response_received:
+                  type: string
+                  format: date-time
+                response_code:
+                  type: integer
+                response_body:
+                  type: string
+      responses:
+        default:
+          description: Default error sample response
+  '/service/{session_id}':
+    parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: A unique ID assigned to the current RemoteID session.
+    put:
+      summary: Denotes the beginning of a flight
+      description: ''
+      operationId: ''
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_uss:
+                  type: string
+                gufi:
+                  type: string
+                  format: uuid
+                  nullable: true
+                service_initiated:
+                  type: string
+                  format: date-time
+                flight_id:
+                  type: string
+      responses:
+        default:
+          description: Default error sample response
+    post:
+      summary: Captures interactions between vehicles and service providers
+      description: ''
+      operationId: ''
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_uss:
+                  type: string
+                measurement:
+                  type: object
+                  properties:
+                    lat_deg:
+                      type: number
+                      format: double
+                    lon_deg:
+                      type: number
+                      format: double
+                    gnd_spd_kts:
+                      type: number
+                      format: double
+                    track_angle_true_deg:
+                      type: number
+                      format: double
+                    alt_wgs84_ft:
+                      type: number
+                      format: double
+                    alt_baro_ft:
+                      type: number
+                      format: double
+                      nullable: true
+                    hdop:
+                      type: number
+                      format: double          
+                    vdop:
+                      type: number
+                      format: double          
+                    timestamp:
+                      type: string
+                      format: date-time
+                time_of_measurement_receipt:
+                  type: string
+                  format: date-time
+                  
+      responses:
+        default:
+          description: Default error sample response
